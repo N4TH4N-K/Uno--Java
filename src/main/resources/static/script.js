@@ -9,7 +9,7 @@ function choosePlayer(name) {
 }
 
 function startGame() {
-   fetch('http://localhost:8080/game/start-game')
+   fetch('https://uno-java.onrender.com/game/start-game')
        .then(response => response.text())
        .then(data => {
            document.getElementById('response').textContent = data;
@@ -23,14 +23,14 @@ function startGame() {
 }
 
 function loadHand() {
-   fetch("http://localhost:8080/game/current-player")
+   fetch("https://uno-java.onrender.com/game/current-player")
        .then(response => response.text())
        .then(current => {
            const cardContainer = document.getElementById("cardContainer");
            cardContainer.innerHTML = "";
 
            if (current === playerName) {
-               fetch("http://localhost:8080/game/hand")
+               fetch("https://uno-java.onrender.com/game/hand")
                    .then(response => response.json())
                    .then(cards => {
                        cards.forEach(cardStr => {
@@ -81,11 +81,11 @@ function loadHand() {
 }
 
 function drawCard() {
-   fetch('http://localhost:8080/game/current-player')
+   fetch('https://uno-java.onrender.com/game/current-player')
        .then(response => response.text())
        .then(current => {
            if(current === playerName) {
-               fetch("http://localhost:8080/game/draw-card")
+               fetch("https://uno-java.onrender.com/game/draw-card")
                    .then(response => response.text())
                    .then(result => {
                        document.getElementById("drawResult").textContent = result;
@@ -132,7 +132,7 @@ function playCard() {
    }
 
 
-   fetch("http://localhost:8080/game/current-player")
+   fetch("https://uno-java.onrender.com/game/current-player")
        .then(response => response.text())
        .then(current => {
            if (current !== playerName) {
@@ -140,7 +140,7 @@ function playCard() {
                return;
            }
 
-           const url = `http://localhost:8080/game/play?color=${color}&value=${value}`;
+           const url = `https://uno-java.onrender.com/game/play?color=${color}&value=${value}`;
 
            fetch(url, { method: "POST" })
                .then(response => response.text())
@@ -157,7 +157,7 @@ function playCard() {
                    document.getElementById("playResult").textContent = "Error: " + error;
                });
        });
-       fetch("http://localhost:8080/game/winner")
+       fetch("https://uno-java.onrender.com/game/winner")
            .then(response => response.text())
            .then(msg => {
                document.getElementById("winnerDisplay").textContent = msg;
@@ -165,7 +165,7 @@ function playCard() {
 }
 
 function endTurn() {
-   fetch('http://localhost:8080/game/end-turn')
+   fetch('https://uno-java.onrender.com/game/end-turn')
        .then(response => response.text())
        .then(message => {
            document.getElementById('response').textContent = message;
@@ -181,7 +181,7 @@ function endTurn() {
 }
 
 function loadTopCard() {
-   fetch('http://localhost:8080/game/top-card')
+   fetch('https://uno-java.onrender.com/game/top-card')
        .then(response => response.text())
        .then(data => {
            document.getElementById('topCardDisplay').textContent = "Top Card: " + data;
@@ -193,7 +193,7 @@ function loadTopCard() {
 }
 
 function loadCurrentPlayer(){
-   fetch('http://localhost:8080/game/current-player')
+   fetch('https://uno-java.onrender.com/game/current-player')
        .then(response => response.text())
        .then(name => {
            document.getElementById('currentPlayer').textContent = "Current Player: " + name;
