@@ -1,8 +1,32 @@
 let playerName = null;
+let channel = null;
+
+window.addEventListener('DOMContentLoaded', () => {
+    refreshPage();
+
+    const storedName = localStorage.getItem("playerName");
+    if (storedName) {
+        playerName = storedName;
+        loadHand();
+        loadTopCard();
+        loadCurrentPlayer();
+   }
+});
+
+function refreshPage(){
+    channel = new BroadcastChannel('uno-refresh');
+
+    channel.onmessage = (event) => {
+        if(event.data === 'refresh') {
+            location.reload();
+        }
+    }
+}
 
 function choosePlayer(name) {
    playerName = name;
    alert("You are now " + name);
+   localStorage.setItem("playerName", name);
    loadHand();
    loadTopCard();
    loadCurrentPlayer();
@@ -64,9 +88,22 @@ function loadHand() {
                            div.appendChild(cornerBR);
 
                            div.onclick = () => {
-                               document.getElementById("playColor").value = color;
-                               const reverseValue = Object.keys(valueMap).find(key => valueMap[key] === value);
-                               document.getElementById("playValue").value = reverseValue || valueRaw
+                                const reverseValue = Object.keys(valueMap).find(key => valueMap[key] === value);
+                                const rawValue = reverseValue || valueRaw;
+
+                                if(rawValue === "WILD"){
+                                    const chosenColor = prompt("Pick a color: RED, YELLOW, GREEN, BLUE")?.trim().toUpperCase();
+                                    
+                                    if (["RED", "YELLOW", "GREEN", "BLUE"].includes(chosenColor)){
+                                        document.getElementById("playColor").value = chosenColor;
+                                    } else {
+                                        alert("Invalid color. Please choose RED, YELLOW, GREEN, or BLUE.");
+                                        document.getElementById("playColor").value = "";
+                                    }
+                                } else {
+                                    document.getElementById("playColor").value = color;
+                                }
+                                document.getElementById("playValue").value = rawValue;
                            };
 
                            cardContainer.appendChild(div);
@@ -170,10 +207,10 @@ function endTurn() {
        .then(message => {
            document.getElementById('response').textContent = message;
 
-
            loadHand();
            loadTopCard();
            loadCurrentPlayer();
+           channel.postMessage('refresh');
        })
        .catch(error => {
            document.getElementById('response').textContent = "Error: " + error;
